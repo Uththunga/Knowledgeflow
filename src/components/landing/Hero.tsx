@@ -87,7 +87,11 @@ export default function Hero() {
             <Button size="lg" className="gap-2">
               Sign Up for Free
             </Button>
-            <Button variant="outline" size="lg">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => (window.location.href = "/library")}
+            >
               Explore Knowledge
             </Button>
           </div>
