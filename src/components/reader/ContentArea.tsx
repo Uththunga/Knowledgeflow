@@ -1,88 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 
 interface ContentAreaProps {
   content?: string;
   fontSize?: number;
-  fontFamily?: string;
-  theme?: "light" | "dark";
+
   onScroll?: (progress: number) => void;
 }
 
 const ContentArea = ({
-  content = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
+  content = "",
   fontSize = 16,
-  fontFamily = "serif",
-  theme = "light",
-  onScroll,
-}: ContentAreaProps) => {
-  const [currentFontSize, setCurrentFontSize] = useState(fontSize);
 
-  const handleFontSizeChange = (value: number[]) => {
-    setCurrentFontSize(value[0]);
+  onScroll = () => {},
+}: ContentAreaProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [lastScrollPosition, setLastScrollPosition] = useState(0);
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const element = event.currentTarget;
+    const scrollPosition = element.scrollTop;
+    const maxScroll = element.scrollHeight - element.clientHeight;
+    const progress = Math.min(
+      Math.max((scrollPosition / maxScroll) * 100, 0),
+      100,
+    );
+
+    // Only update if changed by more than 1%
+    if (Math.abs(progress - lastScrollPosition) > 1) {
+      setLastScrollPosition(progress);
+      onScroll(progress);
+    }
   };
 
   return (
     <div
       className={cn(
-        "w-full h-full p-8 bg-background transition-colors duration-200",
-        theme === "light" ? "bg-white text-black" : "bg-slate-900 text-white",
+        "w-full h-full transition-colors duration-200",
+        "bg-white text-black",
       )}
     >
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Font size controls */}
-        <div className="flex items-center space-x-4 mb-6">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentFontSize(Math.max(12, currentFontSize - 2))
-            }
-          >
-            A-
-          </Button>
-          <Slider
-            defaultValue={[currentFontSize]}
-            max={24}
-            min={12}
-            step={1}
-            onValueChange={handleFontSizeChange}
-            className="w-[200px]"
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentFontSize(Math.min(24, currentFontSize + 2))
-            }
-          >
-            A+
-          </Button>
-        </div>
-
-        {/* Content area */}
-        <ScrollArea className="h-[calc(100vh-12rem)] w-full rounded-lg border bg-white/50 dark:bg-slate-950/50 p-6 shadow-lg backdrop-blur-sm transition-all duration-200">
+      <ScrollArea
+        className="h-full px-4 md:px-0"
+        onScrollCapture={handleScroll}
+      >
+        <div ref={contentRef} className="max-w-2xl mx-auto py-8">
           <div
             style={{
-              fontSize: `${currentFontSize}px`,
-              fontFamily,
+              fontSize: `${fontSize}px`,
               lineHeight: 1.6,
             }}
             className="prose dark:prose-invert max-w-none"
           >
-            {content.split("\n\n").map((paragraph, index) => (
-              <p key={index} className="mb-4">
-                {paragraph}
-              </p>
-            ))}
+            {content.split("\n").map((line, index) => {
+              if (line.startsWith("# ")) {
+                return (
+                  <h1 key={index} className="text-4xl font-bold mb-6">
+                    {line.replace("# ", "")}
+                  </h1>
+                );
+              } else if (line.startsWith("## ")) {
+                return (
+                  <h2 key={index} className="text-2xl font-semibold mt-8 mb-4">
+                    {line.replace("## ", "")}
+                  </h2>
+                );
+              } else if (line.startsWith("### ")) {
+                return (
+                  <h3 key={index} className="text-xl font-semibold mt-6 mb-3">
+                    {line.replace("### ", "")}
+                  </h3>
+                );
+              } else if (line.startsWith("- ")) {
+                return (
+                  <li key={index} className="ml-4 mb-2">
+                    {line.replace("- ", "")}
+                  </li>
+                );
+              } else if (line.trim() === "") {
+                return <div key={index} className="h-4" />;
+              } else {
+                return (
+                  <p key={index} className="mb-4">
+                    {line}
+                  </p>
+                );
+              }
+            })}
           </div>
-        </ScrollArea>
-      </div>
+        </div>
+      </ScrollArea>
     </div>
   );
 };
