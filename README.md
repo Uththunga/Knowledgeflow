@@ -70,4 +70,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License with an additional courtesy request - see the [LICENSE](LICENSE) file for details. Users are kindly requested to notify us about their usage by:
+- Creating an issue in this repository
+- Or sending an email to the maintainers
+
+This helps us track adoption and understand use cases.
