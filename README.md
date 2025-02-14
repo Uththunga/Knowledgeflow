@@ -1,30 +1,73 @@
-# React + TypeScript + Vite
+# 📚 Knowledgeflow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern digital reading platform built with React and TypeScript, designed to provide an immersive reading experience with support for multiple content formats.
 
-Currently, two official plugins are available:
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## Expanding the ESLint configuration
+- 📖 Integrated EPUB reader with customizable display settings
+- 🎧 Support for multiple content formats (ebooks, summaries, audiobooks, podcasts)
+- 📱 Responsive grid and list views for your library
+- 🔍 Advanced search and filtering capabilities
+- 📂 Hierarchical category organization
+- 🎨 Modern UI built with Radix UI components
+- 🔄 Progress tracking and bookmarking
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🚀 Quick Start
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+1. Clone the repository:
+```bash
+git clone https://github.com/Uththunga/Knowledgeflow.git
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. Install dependencies:
+```bash
+cd Knowledgeflow
+npm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env
+# Configure your environment variables
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+## 🛠️ Tech Stack
+
+- **Frontend Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS
+- **UI Components**: Radix UI
+- **Backend Services**: Supabase
+- **Routing**: React Router
+- **EPUB Reader**: react-reader
+- **State Management**: React Hooks
+- **API Integration**: Google Drive API
+
+## 📁 Project Structure
+
+```
+src/
+├── components/        # Reusable UI components
+├── pages/            # Main application pages
+├── lib/              # Utility functions and services
+├── data/            # Static data and types
+└── types/           # TypeScript type definitions
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
