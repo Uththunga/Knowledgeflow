@@ -1,17 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Grid, List } from "lucide-react";
+import { Search, Grid, List, Upload } from "lucide-react";
+import UploadDialog from "@/components/upload/UploadDialog";
+import { ContentFormat } from "@/components/home";
 
 interface LibraryHeaderProps {
   view?: "grid" | "list";
   onViewChange?: (view: "grid" | "list") => void;
   onSearch?: (query: string) => void;
+  onUpload?: (files: File[], format: ContentFormat, metadata: any) => void;
 }
 
 export default function LibraryHeader({
   view = "grid",
   onViewChange = () => {},
   onSearch = () => {},
+  onUpload = () => {},
 }: LibraryHeaderProps) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
@@ -40,6 +44,7 @@ export default function LibraryHeader({
           >
             <List className="h-4 w-4" />
           </Button>
+          <UploadDialog onUpload={onUpload} />
         </div>
       </div>
     </div>
