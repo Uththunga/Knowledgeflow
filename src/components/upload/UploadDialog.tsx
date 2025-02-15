@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { googleDrive } from "@/lib/googleDrive";
 import {
   Dialog,
@@ -35,14 +36,29 @@ interface AudioFile {
 export default function UploadDialog({
   onUpload = () => {},
 }: UploadDialogProps) {
-  const [selectedFiles, setSelectedFiles] = useState<AudioFile[]>([]);
+  const { toast } = useToast();
+  const [formatData, setFormatData] = useState<
+    Record<
+      ContentFormat,
+      {
+        files: AudioFile[];
+        metadata: BookMetadata;
+      }
+    >
+  >(() => ({
+    ebook: { files: [], metadata: { title: "", author: "" } },
+    summary: { files: [], metadata: { title: "", author: "" } },
+    audiobook: { files: [], metadata: { title: "", author: "" } },
+    podcast: { files: [], metadata: { title: "", author: "" } },
+  }));
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [selectedFormat, setSelectedFormat] = useState<ContentFormat>("ebook");
-  const [metadata, setMetadata] = useState<BookMetadata>({
-    title: "",
-    author: "",
-  });
+
+  // Current format's data
+  const currentData = formatData[selectedFormat];
+  const selectedFiles = currentData.files;
+  const metadata = currentData.metadata;
 
   const formatInfo = {
     ebook: {
@@ -79,9 +95,21 @@ export default function UploadDialog({
         file,
         order: selectedFiles.length + index + 1,
       }));
-      setSelectedFiles([...selectedFiles, ...newFiles]);
+      setFormatData((prev) => ({
+        ...prev,
+        [selectedFormat]: {
+          ...prev[selectedFormat],
+          files: [...prev[selectedFormat].files, ...newFiles],
+        },
+      }));
     } else if (files[0]) {
-      setSelectedFiles([{ file: files[0], order: 1 }]);
+      setFormatData((prev) => ({
+        ...prev,
+        [selectedFormat]: {
+          ...prev[selectedFormat],
+          files: [{ file: files[0], order: 1 }],
+        },
+      }));
     }
   };
 
@@ -103,7 +131,13 @@ export default function UploadDialog({
     newFiles.forEach((file, i) => {
       file.order = i + 1;
     });
-    setSelectedFiles(newFiles);
+    setFormatData((prev) => ({
+      ...prev,
+      [selectedFormat]: {
+        ...prev[selectedFormat],
+        files: newFiles,
+      },
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,9 +169,18 @@ export default function UploadDialog({
           coverUrl: coverUrl || coverPreview || undefined,
           contentUrls,
         });
+
+        toast({
+          title: "Upload successful",
+          description: `${metadata.title} has been uploaded as ${formatInfo[selectedFormat].label}`,
+        });
       } catch (error) {
         console.error("Upload failed:", error);
-        // TODO: Show error toast
+        toast({
+          variant: "destructive",
+          title: "Upload failed",
+          description: error.message || "Please try again",
+        });
       }
     }
   };
@@ -160,7 +203,16 @@ export default function UploadDialog({
             <Input
               value={metadata.title}
               onChange={(e) =>
-                setMetadata((prev) => ({ ...prev, title: e.target.value }))
+                setFormatData((prev) => ({
+                  ...prev,
+                  [selectedFormat]: {
+                    ...prev[selectedFormat],
+                    metadata: {
+                      ...prev[selectedFormat].metadata,
+                      title: e.target.value,
+                    },
+                  },
+                }))
               }
               placeholder="Enter book title"
               required
@@ -173,7 +225,16 @@ export default function UploadDialog({
             <Input
               value={metadata.author}
               onChange={(e) =>
-                setMetadata((prev) => ({ ...prev, author: e.target.value }))
+                setFormatData((prev) => ({
+                  ...prev,
+                  [selectedFormat]: {
+                    ...prev[selectedFormat],
+                    metadata: {
+                      ...prev[selectedFormat].metadata,
+                      author: e.target.value,
+                    },
+                  },
+                }))
               }
               placeholder="Enter author name"
               required
@@ -277,8 +338,8 @@ export default function UploadDialog({
             )}
           </div>
 
-          <Button type="submit" className="w-full">
-            Upload
+          <Button type="submit" className="w-full mt-6" variant="default">
+            Upload Content
           </Button>
         </form>
       </DialogContent>
